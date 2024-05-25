@@ -7,6 +7,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -22,22 +23,22 @@ func RunMockServer() {
 
 	wg.Add(5)
 
-	go createMockRequest(1, shortProcess, &u1)
+	go createMockRequest(1, shortProcess, &u1) // Process 1should complete
 	time.Sleep(1 * time.Second)
 
-	go createMockRequest(2, longProcess, &u2)
+	go createMockRequest(2, longProcess, &u2) //Process 2  should complete
 	time.Sleep(2 * time.Second)
 
-	go createMockRequest(3, shortProcess, &u1)
+	go createMockRequest(3, shortProcess, &u1) //Process 3 should be killed after 4 second
 	time.Sleep(1 * time.Second)
 
-	go createMockRequest(4, longProcess, &u1)
-	go createMockRequest(5, shortProcess, &u2)
+	go createMockRequest(4, longProcess, &u1) // Process 4 should be killed
+	go createMockRequest(5, shortProcess, &u2) // should complete
 
 	wg.Wait()
 }
 
-func createMockRequest(pid int, fn func(), u *User) {
+func createMockRequest(pid int, fn func(ctx context.Context), u *User) {
 	fmt.Println("UserID:", u.ID, "\tProcess", pid, "started.")
 	res := HandleRequest(fn, u)
 
@@ -50,10 +51,10 @@ func createMockRequest(pid int, fn func(), u *User) {
 	wg.Done()
 }
 
-func shortProcess() {
+func shortProcess(ctx context.Context) {
 	time.Sleep(6 * time.Second)
 }
 
-func longProcess() {
+func longProcess(ctx context.Context) {
 	time.Sleep(11 * time.Second)
 }
