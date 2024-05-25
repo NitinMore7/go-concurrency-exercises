@@ -16,13 +16,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clean Workspace
+      run: rm -rf $GITHUB_WORKSPACE/*
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
 
+    - name: Update permissions
+      run: chmod +x $GITHUB_WORKSPACE/5-session-cleaner/6-session-cleaner
+
     - name: Build
-      run: go build -v ./5-session-cleaner
+      run: go build -v ./...
 
     - name: Test
       run: go test -v ./...
+
