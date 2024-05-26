@@ -58,6 +58,7 @@ func TestSessionManagersCleanerAfterUpdate(t *testing.T) {
 		t.Error("Error CreateSession:", err)
 	}
 
+	// adding comment to check if build trigerred says what
 	time.Sleep(3 * time.Second)
 
 	err = m.UpdateSessionData(sID, make(map[string]interface{}))
